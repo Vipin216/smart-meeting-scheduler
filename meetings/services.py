@@ -1,6 +1,8 @@
 from django.db.models import Q
 from rest_framework.exceptions import ValidationError
 from .models import Meeting
+from integrations.models import GoogleToken
+from integrations.google_calendar import create_google_calendar_event
 
 
 class MeetingService:
@@ -31,5 +33,19 @@ class MeetingService:
             host=user,
             **validated_data
         )
+
+        try:
+            token = GoogleToken.objects.get(user=user)
+
+            event_id = create_google_calendar_event(
+                token.access_token,
+                meeting
+            )
+
+            meeting.google_event_id = event_id
+            meeting.save()
+
+        except GoogleToken.DoesNotExist:
+            pass
 
         return meeting

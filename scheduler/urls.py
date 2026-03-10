@@ -26,5 +26,6 @@ urlpatterns = [
     path('api/token/',TokenObtainPairView.as_view()),
     path('api/token/refresh/',TokenRefreshView.as_view()),
     path('api/meetings/',include('meetings.urls')),
+    path("api/google/", include('integrations.urls')),
 
 ]
